@@ -1,13 +1,23 @@
 package main
 
 import (
+	"bbc/common/utils"
 	cli2 "bbc/core/cli"
 	"flag"
 	"fmt"
 )
 
-func main()  {
-	cli:=cli2.CLI{}
+func main1() {
+	result := utils.Base58Encode([]byte("this is the example"))
+	raws := utils.Base58Decode([]byte("1nj2SLMErZakmBni8xhSXtimREn"))
+	//result:=base58.Encode([]byte("dd"))
+	//raws:=base58.Decode("dd")
+	fmt.Printf("result:%s\n",result)
+	fmt.Printf("decode result:%s\n",raws)
+}
+
+func main() {
+	cli := cli2.CLI{}
 	cli.RUN()
 }
 

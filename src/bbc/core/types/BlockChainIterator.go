@@ -1,6 +1,7 @@
 package types
 
 import (
+	"bbc/common"
 	"github.com/boltdb/bolt"
 	"log"
 )
@@ -19,7 +20,7 @@ func (bcit *BlockChainIterator) Next() *Block {
 	var block *Block
 
 	err := bcit.DB.View(func(tx *bolt.Tx) error {
-		b := tx.Bucket([]byte(blockTableName))
+		b := tx.Bucket([]byte(common.BlockTableName))
 		if nil != b {
 			currentBlockBytes := b.Get(bcit.CurrentHash)
 			block = Deserialize(currentBlockBytes)

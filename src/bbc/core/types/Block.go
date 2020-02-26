@@ -2,7 +2,6 @@ package types
 
 import (
 	"bytes"
-	"crypto/sha256"
 	"encoding/gob"
 	"log"
 	"time"
@@ -14,6 +13,7 @@ type Block struct {
 	PreBlockHash []byte
 	Height       int64
 	//Data         []byte
+	//MerkleRoot []byte         //merkle树根节点哈希
 	Txs   []*Transaction //交易数据（交易列表）
 	Nonce int64
 }
@@ -26,7 +26,7 @@ func NewBlock(height int64, preBlockHash []byte, txs []*Transaction) *Block {
 		TimeStamp:    time.Now().Unix(),
 		PreBlockHash: preBlockHash,
 		Hash:         nil,
-		Txs:         txs,
+		Txs:          txs,
 		Height:       height,
 	}
 
@@ -88,11 +88,14 @@ func Deserialize(blockBytes []byte) *Block {
 }
 
 //把指定区块所有交易记录序列化 (类似merkle的哈希计算方法)
-func (b *Block) HashTransaction()[]byte  {
+func (b *Block) HashTransaction() []byte {
 	var txHashes [][]byte
-	for _,tx:=range b.Txs{
+	for _, tx := range b.Txs {
 		txHashes = append(txHashes, tx.TxHash)
 	}
-	txHash:=sha256.Sum256(bytes.Join(txHashes,[]byte{}))
-	return txHash[:]
+	//
+	//txHash := sha256.Sum256(bytes.Join(txHashes, []byte{}))
+	//将交易数据存入merkle树，然后生成merkle根节点
+	merkletree := NewMerkleTree(txHashes)
+	return merkletree.RootNode.Data
 }
